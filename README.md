@@ -280,22 +280,6 @@ python3 python/src/cli.py --dataset datasets/medium.json --mode single --runs 3
 
 ---
 
-## 9. Citation
-
-If you use this benchmark suite, physics models, or experimental datasets in academic research or engineering literature, please cite this work as:
-
-```bibtex
-@misc{polyglot_route_optimization_2026,
-  author = {Systems and Algorithms Research Group},
-  title = {Empirical Performance and Systems Analysis of Multi-Language Implementations in Physics-Constrained Vehicle Route Optimization},
-  year = {2026},
-  publisher = {GitHub},
-  howpublished = {\url{https://github.com/selmancanklnc/polyglot-route-benchmark}}
-}
-```
-
----
-
-## 10. License
+## 9. License
 
 This research codebase and its accompanying datasets are distributed under the open-source **[MIT License](LICENSE)**.
