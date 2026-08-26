@@ -38,7 +38,7 @@ Vertex v (x2, y2, elevation)        5. Volumetric Fuel:  V_fuel
 
 The steady-state traversal speed $v_{\text{eff}}$ along an edge $e$ is bounded by statutory limits, historical average flow, surface typology, and gravitational deceleration on inclines:
 
-$$v_{\text{eff}} = \operatorname{clip}\Bigl(\min\bigl(v_{\text{limit}},\, v_{\text{avg}}\bigr) \cdot T \cdot f_{\text{road}} \cdot f_{\text{slope}}(\theta),\; v_{\min},\; v_{\max}\Bigr) \quad [\text{km/h}]$$
+$$v_{\text{eff}} = \text{clip}\Bigl(\min\bigl(v_{\text{limit}},\, v_{\text{avg}}\bigr) \cdot T \cdot f_{\text{road}} \cdot f_{\text{slope}}(\theta),\; v_{\min},\; v_{\max}\Bigr) \quad [\text{km/h}]$$
 
 where:
 - $T \in [0.2,\, 1.0]$ represents the dynamic traffic congestion multiplier.
@@ -169,8 +169,8 @@ $$h(u, t) = \begin{cases} \dfrac{\|\mathbf{x}_u - \mathbf{x}_t\|_2}{v_{\max}} \t
 
 Deterministic shortest-path algorithms ignore environmental stochasticity. The Monte Carlo engine executes $N = 10,000$ independent realizations over optimal paths under Gaussian noise distributions:
 
-- **Stochastic Traffic Perturbation**: $T_i \sim \operatorname{clip}\bigl(\mathcal{N}(T_0,\, \sigma_T = 0.08),\, 0.2,\, 1.0\bigr)$
-- **Stochastic Wind Velocity**: $W_i \sim \operatorname{clip}\bigl(\mathcal{N}(W_0,\, \sigma_W = 3.0\,\text{m/s}),\, 0.0,\, \infty\bigr)$
+- **Stochastic Traffic Perturbation**: $T_i \sim \text{clip}\bigl(\mathcal{N}(T_0,\, \sigma_T = 0.08),\, 0.2,\, 1.0\bigr)$
+- **Stochastic Wind Velocity**: $W_i \sim \text{clip}\bigl(\mathcal{N}(W_0,\, \sigma_W = 3.0\,\text{m/s}),\, 0.0,\, \infty\bigr)$
 
 ```
 Deterministic Baseline: Travel Time = 4.80 min | Fuel Cost = $4.55
