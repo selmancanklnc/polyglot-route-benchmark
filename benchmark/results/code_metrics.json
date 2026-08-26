@@ -1,0 +1,37 @@
+{
+  "python": {
+    "loc": 466,
+    "comments": 24,
+    "blank_lines": 90,
+    "total_lines": 580,
+    "num_files": 7
+  },
+  "cpp": {
+    "loc": 761,
+    "comments": 61,
+    "blank_lines": 139,
+    "total_lines": 961,
+    "num_files": 8
+  },
+  "rust": {
+    "loc": 622,
+    "comments": 22,
+    "blank_lines": 99,
+    "total_lines": 743,
+    "num_files": 8
+  },
+  "go": {
+    "loc": 651,
+    "comments": 13,
+    "blank_lines": 102,
+    "total_lines": 766,
+    "num_files": 7
+  },
+  "java": {
+    "loc": 693,
+    "comments": 5,
+    "blank_lines": 164,
+    "total_lines": 862,
+    "num_files": 13
+  }
+}

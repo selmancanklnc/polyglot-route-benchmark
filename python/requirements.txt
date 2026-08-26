@@ -1,0 +1,4 @@
+# Vehicle Route Optimization Benchmark — Python Dependencies
+pytest>=7.0.0
+numpy>=1.20.0
+matplotlib>=3.5.0

@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pytest_cache/
+
+# C++ Build artifacts
+cpp/build/
+*.o
+*.a
+*.so
+*.dylib
+*.out
+
+# Rust Build artifacts
+rust/target/
+Cargo.lock
+
+# Go Build artifacts
+go/route_optimizer_go
+*.exe
+
+# Java Build artifacts
+java/.gradle/
+java/build/
+java/out/
+*.class
+*.jar
+
+# IDE & OS files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~
