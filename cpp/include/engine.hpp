@@ -60,8 +60,10 @@ inline std::pair<Graph, std::vector<Query>> load_dataset(const std::string& file
         config.road_speed_factors[k] = v.as_double();
     }
 
+    const auto& node_arr = root["nodes"].as_array();
     std::vector<Node> nodes;
-    for (const auto& item : root["nodes"].as_array()) {
+    nodes.reserve(node_arr.size());
+    for (const auto& item : node_arr) {
         nodes.push_back({
             item["id"].as_int(),
             item["x"].as_double(),
@@ -70,8 +72,10 @@ inline std::pair<Graph, std::vector<Query>> load_dataset(const std::string& file
         });
     }
 
+    const auto& edge_arr = root["edges"].as_array();
     std::vector<Edge> edges;
-    for (const auto& item : root["edges"].as_array()) {
+    edges.reserve(edge_arr.size());
+    for (const auto& item : edge_arr) {
         edges.push_back({
             item["id"].as_int(),
             item["source"].as_int(),
@@ -89,8 +93,10 @@ inline std::pair<Graph, std::vector<Query>> load_dataset(const std::string& file
         });
     }
 
+    const auto& query_arr = root["queries"].as_array();
     std::vector<Query> queries;
-    for (const auto& item : root["queries"].as_array()) {
+    queries.reserve(query_arr.size());
+    for (const auto& item : query_arr) {
         queries.push_back({
             item["id"].as_int(),
             item["source"].as_int(),

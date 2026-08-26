@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <cctype>
+#include <cstdlib>
 
 namespace route_sim {
 
@@ -169,15 +170,14 @@ private:
     }
 
     static JsonValue parse_number(const std::string& src, size_t& idx) {
-        size_t start = idx;
-        if (src[idx] == '-') idx++;
-        while (idx < src.size() && (std::isdigit(static_cast<unsigned char>(src[idx])) || src[idx] == '.' || src[idx] == 'e' || src[idx] == 'E' || src[idx] == '+' || src[idx] == '-')) {
-            idx++;
-        }
-        std::string num_str = src.substr(start, idx - start);
+        const char* start_ptr = src.c_str() + idx;
+        char* end_ptr = nullptr;
+        double num = std::strtod(start_ptr, &end_ptr);
+        idx += static_cast<size_t>(end_ptr - start_ptr);
+
         JsonValue val;
         val.type = JsonType::Number;
-        val.num_val = std::stod(num_str);
+        val.num_val = num;
         return val;
     }
 

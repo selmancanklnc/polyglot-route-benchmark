@@ -6,6 +6,15 @@ __pycache__/
 
 # C++ Build artifacts
 cpp/build/
+cpp/CMakeCache.txt
+cpp/CMakeFiles/
+cpp/CTestTestfile.cmake
+cpp/Makefile
+cpp/cmake_install.cmake
+cpp/compile_commands.json
+cpp/route_optimizer
+cpp/test_physics
+cpp/test_routing
 *.o
 *.a
 *.so

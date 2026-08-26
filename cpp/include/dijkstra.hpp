@@ -52,7 +52,7 @@ struct DijkstraEntry {
 inline std::optional<RouteResult> solve_dijkstra(const Graph& graph, int source, int target, const std::string& mode) {
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    if (graph.nodes.find(source) == graph.nodes.end() || graph.nodes.find(target) == graph.nodes.end()) {
+    if (!graph.has_node(source) || !graph.has_node(target)) {
         return std::nullopt;
     }
 
@@ -69,13 +69,15 @@ inline std::optional<RouteResult> solve_dijkstra(const Graph& graph, int source,
         return res;
     }
 
+    const OptMode opt_mode = parse_mode(mode);
+
     // dist[v] = minimum accumulated cost recorded to vertex v
-    std::unordered_map<int, double> dist;
+    std::vector<double> dist(graph.nodes.size(), std::numeric_limits<double>::infinity());
     // prev[v] = (predecessor_vertex, edge_index) for path reconstruction
-    std::unordered_map<int, std::pair<int, size_t>> prev;
+    std::vector<std::pair<int, size_t>> prev(graph.nodes.size());
     std::priority_queue<DijkstraEntry, std::vector<DijkstraEntry>, std::greater<DijkstraEntry>> pq;
 
-    dist[source] = 0.0;
+    dist[static_cast<size_t>(source)] = 0.0;
     pq.push({0.0, source});
     int nodes_explored = 0;
     bool found = false;
@@ -84,8 +86,7 @@ inline std::optional<RouteResult> solve_dijkstra(const Graph& graph, int source,
         auto [d, u] = pq.top();
         pq.pop();
 
-        auto it = dist.find(u);
-        if (it != dist.end() && d > it->second) {
+        if (d > dist[static_cast<size_t>(u)]) {
             continue;
         }
 
@@ -96,18 +97,14 @@ inline std::optional<RouteResult> solve_dijkstra(const Graph& graph, int source,
             break;
         }
 
-        auto adj_it = graph.adj.find(u);
-        if (adj_it == graph.adj.end()) continue;
-
-        for (const auto& [v, edge_idx] : adj_it->second) {
+        for (const auto& [v, edge_idx] : graph.adj[static_cast<size_t>(u)]) {
             const auto& edge = graph.edges[edge_idx];
-            double weight = graph.get_edge_weight(edge, mode);
+            double weight = graph.get_edge_weight(edge, opt_mode);
             double new_dist = d + weight;
 
-            auto v_it = dist.find(v);
-            if (v_it == dist.end() || new_dist < v_it->second) {
-                dist[v] = new_dist;
-                prev[v] = {u, edge_idx};
+            if (new_dist < dist[static_cast<size_t>(v)]) {
+                dist[static_cast<size_t>(v)] = new_dist;
+                prev[static_cast<size_t>(v)] = {u, edge_idx};
                 pq.push({new_dist, v});
             }
         }
@@ -125,7 +122,7 @@ inline std::optional<RouteResult> solve_dijkstra(const Graph& graph, int source,
     route_nodes.push_back(curr);
 
     while (curr != source) {
-        const auto& [p, edge_idx] = prev[curr];
+        const auto& [p, edge_idx] = prev[static_cast<size_t>(curr)];
         route_edges.push_back(edge_idx);
         curr = p;
         route_nodes.push_back(curr);
@@ -160,7 +157,7 @@ inline std::optional<RouteResult> solve_dijkstra(const Graph& graph, int source,
     res.fuel_liters = std::round(tot_fuel * 10000.0) / 10000.0;
     res.fuel_cost = std::round(tot_fuel_cost * 10000.0) / 10000.0;
     res.toll_cost = std::round(tot_toll * 10000.0) / 10000.0;
-    res.total_cost = std::round(dist[target] * 10000.0) / 10000.0;
+    res.total_cost = std::round(dist[static_cast<size_t>(target)] * 10000.0) / 10000.0;
     res.nodes_explored = nodes_explored;
     res.execution_time_us = exec_us;
 

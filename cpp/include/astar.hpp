@@ -57,18 +57,16 @@ struct AStarEntry {
  * @param config      Simulation configuration providing weight coefficients.
  * @return Non-negative admissible lower bound on cost from u_node to target_node.
  */
-inline double astar_heuristic(const Node& u_node, const Node& target_node, const std::string& mode, const Config& config) {
+inline double astar_heuristic(const Node& u_node, const Node& target_node, OptMode mode, const Config& config) {
     double dx = target_node.x - u_node.x;
     double dy = target_node.y - u_node.y;
     double dist_km = std::sqrt(dx * dx + dy * dy);
     double min_time_min = (dist_km / 140.0) * 60.0;
 
-    if (mode == "FASTEST") {
-        return min_time_min;
-    } else if (mode == "BALANCED") {
-        return config.time_weight * min_time_min;
-    } else {
-        return 0.0;
+    switch (mode) {
+        case OptMode::FASTEST:  return min_time_min;
+        case OptMode::BALANCED: return config.time_weight * min_time_min;
+        default:                return 0.0;
     }
 }
 
@@ -89,11 +87,11 @@ inline double astar_heuristic(const Node& u_node, const Node& target_node, const
 inline std::optional<RouteResult> solve_astar(const Graph& graph, int source, int target, const std::string& mode) {
     auto start_time = std::chrono::high_resolution_clock::now();
 
-    if (graph.nodes.find(source) == graph.nodes.end() || graph.nodes.find(target) == graph.nodes.end()) {
+    if (!graph.has_node(source) || !graph.has_node(target)) {
         return std::nullopt;
     }
 
-    const Node& target_node = graph.nodes.at(target);
+    const Node& target_node = graph.nodes[static_cast<size_t>(target)];
 
     if (source == target) {
         RouteResult res;
@@ -108,12 +106,14 @@ inline std::optional<RouteResult> solve_astar(const Graph& graph, int source, in
         return res;
     }
 
-    std::unordered_map<int, double> g_score;
-    std::unordered_map<int, std::pair<int, size_t>> prev;
+    const OptMode opt_mode = parse_mode(mode);
+
+    std::vector<double> g_score(graph.nodes.size(), std::numeric_limits<double>::infinity());
+    std::vector<std::pair<int, size_t>> prev(graph.nodes.size());
     std::priority_queue<AStarEntry, std::vector<AStarEntry>, std::greater<AStarEntry>> pq;
 
-    double h0 = astar_heuristic(graph.nodes.at(source), target_node, mode, graph.config);
-    g_score[source] = 0.0;
+    double h0 = astar_heuristic(graph.nodes[static_cast<size_t>(source)], target_node, opt_mode, graph.config);
+    g_score[static_cast<size_t>(source)] = 0.0;
     pq.push({h0, 0.0, source});
 
     int nodes_explored = 0;
@@ -124,8 +124,7 @@ inline std::optional<RouteResult> solve_astar(const Graph& graph, int source, in
         (void)f;
         pq.pop();
 
-        auto it = g_score.find(u);
-        if (it != g_score.end() && g > it->second) {
+        if (g > g_score[static_cast<size_t>(u)]) {
             continue;
         }
 
@@ -136,19 +135,15 @@ inline std::optional<RouteResult> solve_astar(const Graph& graph, int source, in
             break;
         }
 
-        auto adj_it = graph.adj.find(u);
-        if (adj_it == graph.adj.end()) continue;
-
-        for (const auto& [v, edge_idx] : adj_it->second) {
+        for (const auto& [v, edge_idx] : graph.adj[static_cast<size_t>(u)]) {
             const auto& edge = graph.edges[edge_idx];
-            double weight = graph.get_edge_weight(edge, mode);
+            double weight = graph.get_edge_weight(edge, opt_mode);
             double tentative_g = g + weight;
 
-            auto v_it = g_score.find(v);
-            if (v_it == g_score.end() || tentative_g < v_it->second) {
-                g_score[v] = tentative_g;
-                prev[v] = {u, edge_idx};
-                double h = astar_heuristic(graph.nodes.at(v), target_node, mode, graph.config);
+            if (tentative_g < g_score[static_cast<size_t>(v)]) {
+                g_score[static_cast<size_t>(v)] = tentative_g;
+                prev[static_cast<size_t>(v)] = {u, edge_idx};
+                double h = astar_heuristic(graph.nodes[static_cast<size_t>(v)], target_node, opt_mode, graph.config);
                 pq.push({tentative_g + h, tentative_g, v});
             }
         }
@@ -166,7 +161,7 @@ inline std::optional<RouteResult> solve_astar(const Graph& graph, int source, in
     route_nodes.push_back(curr);
 
     while (curr != source) {
-        const auto& [p, edge_idx] = prev[curr];
+        const auto& [p, edge_idx] = prev[static_cast<size_t>(curr)];
         route_edges.push_back(edge_idx);
         curr = p;
         route_nodes.push_back(curr);
@@ -201,7 +196,7 @@ inline std::optional<RouteResult> solve_astar(const Graph& graph, int source, in
     res.fuel_liters = std::round(tot_fuel * 10000.0) / 10000.0;
     res.fuel_cost = std::round(tot_fuel_cost * 10000.0) / 10000.0;
     res.toll_cost = std::round(tot_toll * 10000.0) / 10000.0;
-    res.total_cost = std::round(g_score[target] * 10000.0) / 10000.0;
+    res.total_cost = std::round(g_score[static_cast<size_t>(target)] * 10000.0) / 10000.0;
     res.nodes_explored = nodes_explored;
     res.execution_time_us = exec_us;
 
