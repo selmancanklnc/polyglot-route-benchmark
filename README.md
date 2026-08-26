@@ -106,7 +106,7 @@ where the canonical weights satisfy the simplex constraint: $w_f + w_t + w_l = 1
 
 All benchmark graph datasets are generated via deterministic pseudo-random spatial graph generation (`datasets/generate_datasets.py`, RNG seed $= 42$):
 
-| Dataset Identifier | Vertices ($|V|$) | Directed Edges ($|E|$) | Average Degree ($|E|/|V|$) | Workload ($|Q|$) | Spatial Extent |
+| Dataset Identifier | Vertices ($\vert V\vert$) | Directed Edges ($\vert E\vert$) | Average Degree ($\vert E\vert / \vert V\vert$) | Workload ($\vert Q\vert$) | Spatial Extent |
 |:---|---:|---:|---:|---:|:---|
 | `test_fixture.json` | 10 | 26 | 2.60 | 6 | $10 \times 10\,\text{km}$ |
 | `small.json` | 1,000 | 5,000 | 5.00 | 20 | $50 \times 50\,\text{km}$ |
@@ -147,11 +147,11 @@ All benchmark graph datasets are generated via deterministic pseudo-random spati
 
 | Language | Adjacency Representation | Priority Queue Primitive | Pointer Indirection Overhead | Asymptotic Complexity |
 |:---|:---|:---|:---|:---|
-| **C++20** | `std::unordered_map<int, vector<pair<int, size_t>>>` | `std::priority_queue<DijkstraEntry, vector, greater>` | Zero on flat vectors; node-based hash map | $\mathcal{O}\bigl((|V| + |E|)\log |V|\bigr)$ |
-| **Rust** | `HashMap<usize, Vec<(usize, usize)>>` | `std::collections::BinaryHeap<State>` | Zero-overhead fat pointers; monomorphized structs | $\mathcal{O}\bigl((|V| + |E|)\log |V|\bigr)$ |
-| **Go** | `map[int][]HalfEdge` | `container/heap` over slice pointer | 24-byte slice header; flat value structs | $\mathcal{O}\bigl((|V| + |E|)\log |V|\bigr)$ |
-| **Java** | `HashMap<Integer, List<HalfEdge>>` | `java.util.PriorityQueue<DijkstraEntry>` | 16-byte object headers + 8-byte reference per entry | $\mathcal{O}\bigl((|V| + |E|)\log |V|\bigr)$ |
-| **Python**| `dict[int, list[tuple[int, Edge]]]` | `heapq` over tuple objects | 28-byte PyObject header per integer/float | $\mathcal{O}\bigl((|V| + |E|)\log |V|\bigr)$ |
+| **C++20** | `std::unordered_map<int, vector<pair<int, size_t>>>` | `std::priority_queue<DijkstraEntry, vector, greater>` | Zero on flat vectors; node-based hash map | $\mathcal{O}\bigl((\vert V\vert + \vert E\vert)\log \vert V\vert\bigr)$ |
+| **Rust** | `HashMap<usize, Vec<(usize, usize)>>` | `std::collections::BinaryHeap<State>` | Zero-overhead fat pointers; monomorphized structs | $\mathcal{O}\bigl((\vert V\vert + \vert E\vert)\log \vert V\vert\bigr)$ |
+| **Go** | `map[int][]HalfEdge` | `container/heap` over slice pointer | 24-byte slice header; flat value structs | $\mathcal{O}\bigl((\vert V\vert + \vert E\vert)\log \vert V\vert\bigr)$ |
+| **Java** | `HashMap<Integer, List<HalfEdge>>` | `java.util.PriorityQueue<DijkstraEntry>` | 16-byte object headers + 8-byte reference per entry | $\mathcal{O}\bigl((\vert V\vert + \vert E\vert)\log \vert V\vert\bigr)$ |
+| **Python**| `dict[int, list[tuple[int, Edge]]]` | `heapq` over tuple objects | 28-byte PyObject header per integer/float | $\mathcal{O}\bigl((\vert V\vert + \vert E\vert)\log \vert V\vert\bigr)$ |
 
 ### 4.2 A* Heuristic Consistency and Optimality
 
