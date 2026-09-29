@@ -4,9 +4,9 @@
 [![C++](https://img.shields.io/badge/C%2B%2B-20-00599C.svg)]()
 [![Rust](https://img.shields.io/badge/Rust-2021-000000.svg)]()
 [![Go](https://img.shields.io/badge/Go-1.22%2B-00ADD8.svg)]()
-[![Java](https://img.shields.io/badge/Java-20%20LTS-ED8B00.svg)]()
+[![Java](https://img.shields.io/badge/Java-20-ED8B00.svg)]()
 [![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB.svg)]()
-[![Verification](https://img.shields.io/badge/Test%20Suite-Passed%20(100%25)-brightgreen.svg)]()
+[![Tests](https://github.com/selmancanklnc/polyglot-route-benchmark/actions/workflows/tests.yml/badge.svg)](https://github.com/selmancanklnc/polyglot-route-benchmark/actions/workflows/tests.yml)
 
 ---
 

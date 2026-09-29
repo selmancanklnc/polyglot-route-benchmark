@@ -35,6 +35,7 @@ java/build/
 java/out/
 *.class
 *.jar
+!java/gradle/wrapper/gradle-wrapper.jar
 
 # IDE & OS files
 .DS_Store
